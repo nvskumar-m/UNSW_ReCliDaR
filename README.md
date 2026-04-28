@@ -1,6 +1,6 @@
 # 🌍 ReCliDaR: Representative Climate Days Recognizer
 
-**Product of University of New South Wales Sydney**
+**Product of University of New South Wales (UNSW Sydney), Australia**
 
 ReCliDaR is a research tool designed to identify representative climate days from EnergyPlus Weather (.epw) files using unsupervised machine learning techniques. It enables building energy and urban microclimate modelers to reduce simulation time by leveraging weighted representative days, while still preserving the accuracy of performance assessments for urban built environments.
 
