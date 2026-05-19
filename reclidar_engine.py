@@ -1,5 +1,7 @@
-import pandas as pd
+import os
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 from ladybug.epw import EPW
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans, AgglomerativeClustering
@@ -73,7 +75,7 @@ class ReCliDaR:
                 'Cluster': j,
                 'Month': int(row["Month"]),
                 'Day': int(row["Day_of_Month"]),
-                'Weight': len(subset_scaled)
+                'Total_Days': len(subset_scaled)
             })
         return pd.DataFrame(rep_days)
 
@@ -87,3 +89,151 @@ class ReCliDaR:
         for j in np.unique(labels):
             dist_df[f'{method_name}_{j}'] = [len(temp_df[(temp_df['cluster'] == j) & (temp_df['Month'] == m)]) for m in range(1, 13)]
         return dist_df
+
+    # --- NEW AUTOMATED ANALYTICAL ENGINE EXTENSIONS ---
+
+    @staticmethod
+    def analyze_circular_continuity(month_counts, threshold_days=3):
+        """Circular continuity math logic extracted from app.py."""
+        core_months = [m for m, count in month_counts.items() if count > threshold_days]
+        extreme_months = [m for m, count in month_counts.items() if 0 < count <= threshold_days]
+        
+        if not core_months:
+            return "Discontinuous / Insufficient Core Baseline Data", extreme_months
+
+        if len(core_months) == 1:
+            base_status = "Continuous Seasonal Continuity (Single Month Spanned)"
+        else:
+            core_months = sorted(core_months)
+            gaps = []
+            for i in range(len(core_months)):
+                m1 = core_months[i]
+                m2 = core_months[(i + 1) % len(core_months)]
+                if m2 > m1:
+                    diff = m2 - m1
+                else:
+                    diff = (m2 + 12) - m1
+                if diff > 1:
+                    gaps.append(diff)
+                    
+            if len(gaps) <= 1:
+                base_status = "Continuous Seasonal Continuity Block"
+            else:
+                base_status = "Trans-seasonal / Discontinuous Block"
+                
+        if extreme_months:
+            base_status += " (with Extreme Event Days)"
+        return base_status, extreme_months
+
+    @classmethod
+    def generate_v101_report(cls, rep_df, raw_counts_dict, methods):
+        """Generates the Objective v1.0.1 continuity text summary string."""
+        months_map = {1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', 
+                      7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'}
+        
+        lines = [
+            "========================================================================",
+            "        RECLIDAR CLIMATIC REPRESENTATION & CONTINUITY REPORT (v1.0.1)   ",
+            "========================================================================\n"
+        ]
+        
+        for m in methods:
+            lines.append(f"## ALGORITHM: {m.upper()}")
+            m_reps = rep_df[rep_df['Algorithm'] == m]
+            
+            for _, row in m_reps.iterrows():
+                c_id = int(row['Cluster'])
+                rep_m = months_map[int(row['Month'])]
+                rep_d = int(row['Day'])
+                weight = int(row['Total_Days'])
+                
+                col_name = f"{m}_{c_id}"
+                m_counts = raw_counts_dict[col_name]
+                
+                continuity_status, extreme_indices = cls.analyze_circular_continuity(m_counts, threshold_days=3)
+                
+                lines.append(f"  ▶ Cluster {c_id}: Represented by Date {rep_m}-{rep_d:02d}")
+                lines.append(f"    - Total Days Covered      : {weight} days")
+                lines.append(f"    - Seasonal Continuity     : {continuity_status}")
+                
+                if extreme_indices:
+                    ext_strings = [f"{months_map[idx]} ({m_counts[idx]} days)" for idx in extreme_indices]
+                    lines.append(f"    - Extreme Event Days      : Baseline continuity preserved. Outlier days recorded in: {', '.join(ext_strings)}.")
+                else:
+                    lines.append(f"    - Extreme Event Days      : Zero outlier profile instances recorded outside core seasonal continuity blocks.")
+                lines.append("")
+            lines.append("-" * 72)
+        return "\n".join(lines)
+
+    @staticmethod
+    def generate_radar_plots(raw_counts_dict, methods, save_path=None):
+        """Generates Matplotlib Radar plots and returns the figure object (and optionally saves it)."""
+        month_labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        angles = np.linspace(0, 2 * np.pi, 12, endpoint=False).tolist()
+        angles += angles[:1] 
+        
+        fig, axs = plt.subplots(1, len(methods), figsize=(16, 6), subplot_kw=dict(polar=True))
+        if len(methods) == 1:
+            axs = [axs]
+            
+        color_list = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+        
+        for idx, m in enumerate(methods):
+            ax = axs[idx]
+            ax.set_theta_offset(np.pi / 2)
+            ax.set_theta_direction(-1)
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(month_labels, fontsize=9)
+            
+            ax.set_title(f"{m.upper()}\nSeasonal Continuity Profile", fontsize=11, pad=20, weight='bold')
+            
+            cluster_idx = 0
+            for col_name, counts in raw_counts_dict.items():
+                if "Limit" in col_name or "Extreme" in col_name:
+                    continue
+                    
+                if col_name.startswith(m):
+                    c_num = col_name.split('_')[1]
+                    cluster_label = f"Cluster {c_num}"
+                    values = [counts[m_idx] for m_idx in range(1, 13)]
+                    values += values[:1] 
+                    
+                    color = color_list[cluster_idx % len(color_list)]
+                    ax.plot(angles, values, linewidth=2, color=color, linestyle='solid', label=cluster_label)
+                    ax.fill(angles, values, color=color, alpha=0.15)
+                    cluster_idx += 1
+                    
+            ax.plot(angles, [3] * len(angles), color='red', linewidth=1.2, linestyle='--', label='Extreme Event Limit')
+            ax.set_rlabel_position(180)
+            ax.tick_params(colors='#555555')
+            ax.grid(True, linestyle=':')
+
+        handles, labels = axs[0].get_legend_handles_labels()
+        
+        clean_labels = []
+        clean_handles = []
+        seen = set()
+        
+        for handle, label in zip(handles, labels):
+            fixed_label = label.replace(" (3 days)", "").strip()
+            if fixed_label not in seen:
+                seen.add(fixed_label)
+                clean_labels.append(fixed_label)
+                clean_handles.append(handle)
+        
+        fig.legend(
+            handles=clean_handles,
+            labels=clean_labels,
+            loc='lower center',
+            bbox_to_anchor=(0.5, -0.05), 
+            ncol=len(clean_labels),
+            fontsize=10,
+            frameon=True
+        )
+        plt.subplots_adjust(top=0.82, bottom=0.15, left=0.05, right=0.95, wspace=0.35)
+        
+        if save_path:
+            plt.savefig(save_path, bbox_inches='tight', dpi=150)
+            plt.close(fig)
+        else:
+            return fig
