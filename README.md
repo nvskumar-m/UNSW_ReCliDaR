@@ -4,6 +4,8 @@
 
 ReCliDaR is a research tool designed to identify representative climate days from EnergyPlus Weather (.epw) files using unsupervised machine learning techniques. It enables building energy and urban microclimate modelers to reduce simulation time by leveraging weighted representative days, while still preserving the accuracy of performance assessments for urban built environments.
 
+Version v1.0.1 introduces automated continuity reporting and seasonal visualization to the platform. The application now uses an objective evaluation engine to analyze circular seasonal continuity across representative clusters, automatically generating text summaries that flag extreme outlier weather days. Additionally, a multi-panel polar radar chart visualization feature has been integrated, providing a direct graphical profile of seasonal weather distributions across your selected machine learning models.
+
 ## Citation
 If you use this software, please cite it using this DOI: [https://doi.org/10.5281/zenodo.20255919](https://doi.org/10.5281/zenodo.20255919)
 
