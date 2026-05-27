@@ -18,6 +18,7 @@ The fastest way to process individual files instantly in your browser.
 
 - 🌐 URL: https://unsw-reclidar.streamlit.app/
 - Best for: Instant individual file processing and cross-platform access
+- Tutorial: https://youtu.be/KbKihxpeahg
 
 ---
 
@@ -26,6 +27,7 @@ A portable desktop application that works without internet or Python.
 
 - Access: Download ReCliDaR_tool.exe from the Releases section
 - Best for: Private, offline research
+- Tutorial: https://youtu.be/_NJuQfAuenk
 
 ---
 
@@ -33,6 +35,7 @@ A portable desktop application that works without internet or Python.
 A modular script (reclidar_engine.py) for large-scale processing.
 
 - Best for: Automating analysis for 100+ files
+- Tutorial: https://youtu.be/ulj6LC5k7UA
 
 ---
 
