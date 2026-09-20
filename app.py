@@ -231,12 +231,12 @@ if os.path.exists(image_path):
             <img src="data:image/png;base64,{encoded_img}" style="width: 62px; height: 62px; border-radius: 8px; object-fit: contain; display: block;"/>
         </div>
         <div style="margin-bottom: 6px;">
-            <h1 style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 2.4rem; color: #FFFFFF; letter-spacing: -0.3px;">
+            <h1 style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 2.4rem; color: inherit; letter-spacing: -0.3px;">
                 ReCliDaR: Representative Climate Days Recognizer
             </h1>
         </div>
         <div style="margin-bottom: 30px;">
-            <p style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.05rem; color: #A0A0A0; font-weight: 400;">
+            <p style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.05rem; color: inherit; opacity: 0.65; font-weight: 400;">
                 Department of Built Environment
             </p>
         </div>
@@ -250,12 +250,12 @@ else:
             <span style="font-size: 7px; font-weight: 500; letter-spacing: 1.0px; margin-top: 2px;">SYDNEY</span>
         </div>
         <div style="margin-bottom: 6px;">
-            <h1 style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 2.4rem; color: #FFFFFF; letter-spacing: -0.3px;">
+            <h1 style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 2.4rem; color: inherit; letter-spacing: -0.3px;">
                 ReCliDaR: Representative Climate Days Recognizer
             </h1>
         </div>
         <div style="margin-bottom: 30px;">
-            <p style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.05rem; color: #A0A0A0; font-weight: 400;">
+            <p style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.05rem; color: inherit; opacity: 0.65; font-weight: 400;">
                 Department of Built Environment
             </p>
         </div>
@@ -275,7 +275,7 @@ selected_methods = st.sidebar.multiselect(
 # --- CENTRALIZED INGESTION PANEL ---
 st.html(
     """
-    <p style="margin: 0 0 8px 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 0.95rem; color: #FFFFFF; font-weight: 500;">
+    <p style="margin: 0 0 8px 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 0.95rem; color: inherit; font-weight: 500;">
         Choose an EPW file
     </p>
     """
