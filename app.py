@@ -237,7 +237,7 @@ if os.path.exists(image_path):
         </div>
         <div style="margin-bottom: 30px;">
             <p style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.05rem; color: inherit; opacity: 0.65; font-weight: 400;">
-                Department of Built Environment
+                School of Built Environment
             </p>
         </div>
     </div>
@@ -256,7 +256,7 @@ else:
         </div>
         <div style="margin-bottom: 30px;">
             <p style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 1.05rem; color: inherit; opacity: 0.65; font-weight: 400;">
-                Department of Built Environment
+                School of Built Environment
             </p>
         </div>
     </div>
