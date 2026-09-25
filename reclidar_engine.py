@@ -122,7 +122,7 @@ class ReCliDaR:
                 base_status = "Trans-seasonal / Discontinuous Block"
                 
         if extreme_months:
-            base_status += " (with Extreme Event Days)"
+            base_status += " (with Low-frequency cluster days)"
         return base_status, extreme_months
 
     @classmethod
@@ -153,14 +153,14 @@ class ReCliDaR:
                 continuity_status, extreme_indices = cls.analyze_circular_continuity(m_counts, threshold_days=3)
                 
                 lines.append(f"  ▶ Cluster {c_id}: Represented by Date {rep_m}-{rep_d:02d}")
-                lines.append(f"    - Total Days Covered      : {weight} days")
-                lines.append(f"    - Seasonal Continuity     : {continuity_status}")
+                lines.append(f"    - Total Days Covered        : {weight} days")
+                lines.append(f"    - Seasonal Continuity       : {continuity_status}")
                 
                 if extreme_indices:
                     ext_strings = [f"{months_map[idx]} ({m_counts[idx]} days)" for idx in extreme_indices]
-                    lines.append(f"    - Extreme Event Days      : Baseline continuity preserved. Outlier days recorded in: {', '.join(ext_strings)}.")
+                    lines.append(f"    - Low-frequency cluster days: Baseline continuity preserved. Outlier days recorded in: {', '.join(ext_strings)}.")
                 else:
-                    lines.append(f"    - Extreme Event Days      : Zero outlier profile instances recorded outside core seasonal continuity blocks.")
+                    lines.append(f"    - Low-frequency cluster days: Zero outlier profile instances recorded outside core seasonal continuity blocks.")
                 lines.append("")
             lines.append("-" * 72)
         return "\n".join(lines)
@@ -203,7 +203,7 @@ class ReCliDaR:
                     ax.fill(angles, values, color=color, alpha=0.15)
                     cluster_idx += 1
                     
-            ax.plot(angles, [3] * len(angles), color='red', linewidth=1.2, linestyle='--', label='Extreme Event Limit')
+            ax.plot(angles, [3] * len(angles), color='red', linewidth=1.2, linestyle='--', label='Low-frequency cluster days limit')
             ax.set_rlabel_position(180)
             ax.tick_params(colors='#555555')
             ax.grid(True, linestyle=':')
